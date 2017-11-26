@@ -5,23 +5,26 @@ This library is giving you functionality of having basic `java.util.function` fu
 * JSConsumer<T>
 This class is represent implementation of Java `Consumer<T>` interface with java script code as:
 
+```java
 	JSConsumer<String> jsConsumer = JSConsumer.of("function printX(x){print(x);}", "printX");
 	jsConsumer.accept("message");
-  
+```
 * JSSupplier<T>
 This class is represent implementation of Java `Supplier<T>` interface with java script code as:
 
+```java
 	JSSupplier<Integer> jsSupplier = JSSupplier.of("function getNumber(){return {" + KEY + ":" + NUMBER + "};}",
 				"getNumber", m -> (Integer) m.get(KEY));
 	Optional<Integer> opt = jsSupplier.get();
-
+```
 * JSFunction<I,O>
 This class is represent implementation of Java `Supplier<T>` interface with java script code as:
 
+```java
 	JSFunction<String, Integer> jsFunction = JSFunction
 				.of("function parse(s){return {value:parseInt(s)};}", "parse", m -> (Integer) m.get("value"));
 	Optional<Integer> value = jsFunction.apply("42");
-    
+```
 > for more examples check test cases.
 ## issues
 * Junit error
