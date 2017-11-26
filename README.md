@@ -1,5 +1,5 @@
 # JavaScript Component
-This library is giving you functionality of having basic `java.util.function` functional components like `Consumer<T>`, `Supplier<T>`, and `Function<I,O>`, to be implemented using java script and to run on java (Nashorn).
+This library is giving you ability to have basic `java.util.function` functional components like {`Consumer<T>`, `Supplier<T>`, and `Function<I,O>`} to be implemented using java script and to run on java (Nashorn).
 	 
 ## usage
 * JSConsumer<T>
