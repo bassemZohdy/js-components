@@ -9,18 +9,25 @@ import javax.script.ScriptException;
 
 public class JSConsumer<T> implements Consumer<T> {
 	private final ScriptEngine engine;
-	private final String script;
 	private final String functionName;
 
-	private JSConsumer(String script, String functionName) {
+	private JSConsumer(String script, String functionName) throws ScriptException {
 		this.engine = new ScriptEngineManager().getEngineByName("nashorn");
-		this.script = script;
+		this.engine.eval(script);
+		this.functionName = functionName;
+	}
+	
+	private JSConsumer(ScriptEngine engine, String functionName) {
+		this.engine = engine;
 		this.functionName = functionName;
 	}
 
 	public static <T> JSConsumer<T> of(String script, String functionName) throws ScriptException {
 		JSConsumer<T> c = new JSConsumer<T>(script, functionName);
-		c.engine.eval(c.script);
+		return c;
+	}
+	public static <T> JSConsumer<T> of(ScriptEngine engine, String functionName) throws ScriptException {
+		JSConsumer<T> c = new JSConsumer<T>(engine, functionName);
 		return c;
 	}
 

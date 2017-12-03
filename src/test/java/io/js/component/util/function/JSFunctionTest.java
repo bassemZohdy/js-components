@@ -25,7 +25,7 @@ public class JSFunctionTest {
 
 	@Test
 	public void testPrimitive() throws ScriptException {
-		JSFunction<String, Integer> jsFunction = JSFunction.of("function parse(s){return parseInt(s);}", "parse", null);
+		JSFunction<String, Integer> jsFunction = JSFunction.of("function parse(s){return java.lang.Integer.parseInt(s);}", "parse", null);
 		Optional<Integer> value = jsFunction.apply(NUMBER_STRING);
 		assertEquals(Optional.of(NUMBER), value);
 	}
@@ -33,7 +33,7 @@ public class JSFunctionTest {
 	@Test
 	public void testObject() throws ScriptException {
 		JSFunction<String, Integer> jsFunction = JSFunction
-				.of("function parse(s){return {" + KEY + ":" + "parseInt(s)};}", "parse", m -> (Integer) m.get(KEY));
+				.of("function parse(s){return {" + KEY + ":" + "java.lang.Integer.parseInt(s)};}", "parse", m -> (Integer) m.get(KEY));
 		Optional<Integer> value = jsFunction.apply(NUMBER_STRING);
 		assertEquals(Optional.of(NUMBER), value);
 	}

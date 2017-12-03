@@ -1,0 +1,6 @@
+io\js\component\context\JSFile.class
+io\js\component\util\function\JSConsumer.class
+io\js\component\util\function\JSSupplier.class
+io\js\component\util\function\JSFunction.class
+io\js\component\util\function\JSException.class
+io\js\component\util\function\JSPredicate.class

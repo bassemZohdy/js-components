@@ -13,13 +13,18 @@ import javax.script.ScriptException;
 public class JSSupplier<T> implements Supplier<Optional<T>> {
 
 	private final ScriptEngine engine;
-	private final String script;
 	private final String functionName;
 	private final Function<Map<String, Object>, T> outFunc;
 
-	private JSSupplier(String script, String functionName, Function<Map<String, Object>, T> outFunc) {
+	private JSSupplier(String script, String functionName, Function<Map<String, Object>, T> outFunc) throws ScriptException {
 		this.engine = new ScriptEngineManager().getEngineByName("nashorn");
-		this.script = script;
+		this.engine.eval(script);
+		this.functionName = functionName;
+		this.outFunc = outFunc;
+	}
+	
+	private JSSupplier(ScriptEngine engine, String functionName, Function<Map<String, Object>, T> outFunc) throws ScriptException {
+		this.engine = engine;
 		this.functionName = functionName;
 		this.outFunc = outFunc;
 	}
@@ -27,7 +32,12 @@ public class JSSupplier<T> implements Supplier<Optional<T>> {
 	public static <T> JSSupplier<T> of(String script, String functionName, Function<Map<String, Object>, T> outFunc)
 			throws ScriptException {
 		JSSupplier<T> s = new JSSupplier<T>(script, functionName, outFunc);
-		s.engine.eval(s.script);
+		return s;
+	}
+	
+	public static <T> JSSupplier<T> of(ScriptEngine engine, String functionName, Function<Map<String, Object>, T> outFunc)
+			throws ScriptException {
+		JSSupplier<T> s = new JSSupplier<T>(engine, functionName, outFunc);
 		return s;
 	}
 

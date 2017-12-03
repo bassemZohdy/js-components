@@ -11,13 +11,17 @@ import javax.script.ScriptException;
 
 public class JSFunction<I, O> implements Function<I, Optional<O>> {
 	private final ScriptEngine engine;
-	private final String script;
 	private final String functionName;
 	private final Function<Map<String, Object>, O> outFunc;
 
-	private JSFunction(String script, String functionName, Function<Map<String, Object>, O> outFunc) {
+	private JSFunction(String script, String functionName, Function<Map<String, Object>, O> outFunc) throws ScriptException {
 		this.engine = new ScriptEngineManager().getEngineByName("nashorn");
-		this.script = script;
+		this.engine.eval(script);
+		this.functionName = functionName;
+		this.outFunc = outFunc;
+	}
+	private JSFunction(ScriptEngine engine, String functionName, Function<Map<String, Object>, O> outFunc) throws ScriptException {
+		this.engine = engine;
 		this.functionName = functionName;
 		this.outFunc = outFunc;
 	}
@@ -25,7 +29,12 @@ public class JSFunction<I, O> implements Function<I, Optional<O>> {
 	public static <I, O> JSFunction<I, O> of(String script, String functionName, Function<Map<String, Object>, O> outFunc)
 			throws ScriptException {
 		JSFunction<I, O> func = new JSFunction<>(script, functionName, outFunc);
-		func.engine.eval(func.script);
+		return func;
+	}
+	
+	public static <I, O> JSFunction<I, O> of(ScriptEngine engine, String functionName, Function<Map<String, Object>, O> outFunc)
+			throws ScriptException {
+		JSFunction<I, O> func = new JSFunction<>(engine, functionName, outFunc);
 		return func;
 	}
 
