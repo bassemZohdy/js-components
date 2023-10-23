@@ -1,36 +1,30 @@
 package io.js.component.util.function;
 
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
+
 import java.util.function.Predicate;
 
 public class JSPredicate<T> implements Predicate<T> {
+	private final Value function;
 
-  rivate final String scri pt;
-  private final String functionName;
-  
-  private JSPredicate(String script, String functionName) {
-		this.engine = new ScriptEngineManager().getEngineByName("nashorn");
-		this.script = script;
-		this.functionName = functionName;
-  }
-  
-  public static <T> JSPredicate<T> of(String script, String functionName)
-  throws ScriptException {
-    JSPredicate<T> s = new JSPredicate<T>(script, functionName);
-    s.engine.eval(s.script);
-    return s;
-  }
+	public JSPredicate(String script) {
+		Context context = Context.newBuilder("js").build();
+		script = script.replaceAll("'", "\\\\'").replaceAll("[\r\n]", "\\\\n");
+		Value compiledFunction = script.contains("return ") ?
+				context.eval("js", "new Function('input', '" + script + "')")
+				:
+				context.eval("js", "new Function('input', 'return " + script + "')");
+		this.function = compiledFunction;
+	}
 
-  @Override
-  public boolean test(T t){
-		Invocable invocable = (Invocable) engine;
-		try {
-			Object value = invocable.invokeFunction(functionName);
-			if (value instanceof Boolean)
-				return (Boolean)value;
-			else
-				return Boolean.valueOf(value.toString());
-		} catch (NoSuchMethodException | ScriptException e) {
-			throw new JSException(e);
-		}
-  }
+	public static <T> JSPredicate<T> of(String script) {
+		return new JSPredicate<>(script);
+	}
+
+	@Override
+	public boolean test(T t) {
+		Value result = function.execute(t);
+		return result.asBoolean();
+	}
 }
